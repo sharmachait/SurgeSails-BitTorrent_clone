@@ -1,4 +1,6 @@
 import com.google.gson.Gson;
+
+import java.util.Arrays;
 // import com.dampcake.bencode.Bencode; - available if you need it!
 
 public class Main {
@@ -11,15 +13,15 @@ public class Main {
     String command = args[0];
     if("decode".equals(command)) {
       //  Uncomment this block to pass the first stage
-      //  String bencodedValue = args[1];
-      //  String decoded;
-      //  try {
-      //    decoded = decodeBencode(bencodedValue);
-      //  } catch(RuntimeException e) {
-      //    System.out.println(e.getMessage());
-      //    return;
-      //  }
-      //  System.out.println(gson.toJson(decoded));
+        String bencodedValue = args[1];
+        String decoded;
+        try {
+          decoded = decodeBencode(bencodedValue.toCharArray());
+        } catch(RuntimeException e) {
+          System.out.println(e.getMessage());
+          return;
+        }
+        System.out.println(gson.toJson(decoded));
 
     } else {
       System.out.println("Unknown command: " + command);
@@ -27,17 +29,19 @@ public class Main {
 
   }
 
-  static String decodeBencode(String bencodedString) {
-    if (Character.isDigit(bencodedString.charAt(0))) {
+  static String decodeBencode(char[] bencodedString) {
+    StringBuilder lengthSB = new StringBuilder();
+    if (Character.isDigit(bencodedString[0])) {
       int firstColonIndex = 0;
-      for(int i = 0; i < bencodedString.length(); i++) { 
-        if(bencodedString.charAt(i) == ':') {
+      for(int i = 0; i < bencodedString.length; i++) {
+        if(bencodedString[i] == ':') {
           firstColonIndex = i;
           break;
         }
+        lengthSB.append(bencodedString[i]);
       }
-      int length = Integer.parseInt(bencodedString.substring(0, firstColonIndex));
-      return bencodedString.substring(firstColonIndex+1, firstColonIndex+1+length);
+      int length = Integer.parseInt(lengthSB.toString());
+      return new String(Arrays.copyOfRange(bencodedString,firstColonIndex,firstColonIndex+1+length));
     } else {
       throw new RuntimeException("Only strings are supported at the moment");
     }
