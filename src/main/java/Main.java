@@ -41,7 +41,7 @@ public class Main {
         lengthSB.append(bencodedString[i]);
       }
       int length = Integer.parseInt(lengthSB.toString());
-      return new String(Arrays.copyOfRange(bencodedString,firstColonIndex,firstColonIndex+1+length));
+      return new String(Arrays.copyOfRange(bencodedString,firstColonIndex+1,firstColonIndex+1+length));
     } else {
       throw new RuntimeException("Only strings are supported at the moment");
     }
