@@ -1,50 +1,44 @@
+import com.dampcake.bencode.Type;
 import com.google.gson.Gson;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-// import com.dampcake.bencode.Bencode; - available if you need it!
+import com.dampcake.bencode.Bencode;
 
 public class Main {
   private static final Gson gson = new Gson();
-
+  private static final Bencode bencode = new Bencode();
   public static void main(String[] args) throws Exception {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.err.println("Logs from your program will appear here!");
-    
     String command = args[0];
-    if("decode".equals(command)) {
-      //  Uncomment this block to pass the first stage
-        String bencodedValue = args[1];
-        String decoded;
-        try {
-          decoded = decodeBencode(bencodedValue.toCharArray());
-        } catch(RuntimeException e) {
-          System.out.println(e.getMessage());
-          return;
+    String bencodedValue = args[1];
+    switch (command) {
+      case "decode":
+        Type type = getType(bencodedValue);
+        if(type == Type.STRING){
+          String decoded = bencode.decode(bencodedValue.getBytes(), Type.STRING);
+          System.out.println(gson.toJson(decoded));
         }
-        System.out.println(gson.toJson(decoded));
-
-    } else {
-      System.out.println("Unknown command: " + command);
-    }
-
-  }
-
-  static String decodeBencode(char[] bencodedString) {
-    StringBuilder lengthSB = new StringBuilder();
-    if (Character.isDigit(bencodedString[0])) {
-      int firstColonIndex = 0;
-      for(int i = 0; i < bencodedString.length; i++) {
-        if(bencodedString[i] == ':') {
-          firstColonIndex = i;
-          break;
+        if(type == Type.NUMBER){
+          Long number = bencode.decode(bencodedValue.getBytes(), Type.NUMBER);
+          System.out.println(gson.toJson(number));
         }
-        lengthSB.append(bencodedString[i]);
-      }
-      int length = Integer.parseInt(lengthSB.toString());
-      return new String(Arrays.copyOfRange(bencodedString,firstColonIndex+1,firstColonIndex+1+length));
-    } else {
-      throw new RuntimeException("Only strings are supported at the moment");
+        break;
     }
   }
-  
+  public static Type getType(String bencodedValue) {
+    char []c = bencodedValue.toCharArray();
+    if(Character.isDigit(c[0])) {
+      return Type.STRING;
+    }else if(c[0]=='i'){
+      return Type.NUMBER;
+    }else if(c[0]=='l'){
+      return Type.LIST;
+    }else if(c[0]=='d'){
+      return Type.DICTIONARY;
+    }else{
+      return Type.UNKNOWN;
+    }
+  }
 }
