@@ -3,6 +3,9 @@ import com.google.gson.Gson;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import com.dampcake.bencode.Bencode;
 
 public class Main {
@@ -15,18 +18,31 @@ public class Main {
     String bencodedValue = args[1];
     switch (command) {
       case "decode":
-        Type type = getType(bencodedValue);
-        if(type == Type.STRING){
-          String decoded = bencode.decode(bencodedValue.getBytes(), Type.STRING);
-          System.out.println(gson.toJson(decoded));
-        }
-        if(type == Type.NUMBER){
-          Long number = bencode.decode(bencodedValue.getBytes(), Type.NUMBER);
-          System.out.println(gson.toJson(number));
-        }
+        decode(bencodedValue);
         break;
     }
   }
+
+  private static void decode(String bencodedValue) {
+    Type type = getType(bencodedValue);
+    if(type == Type.STRING){
+      String decoded = bencode.decode(bencodedValue.getBytes(), Type.STRING);
+      System.out.println(gson.toJson(decoded));
+    }
+    if(type == Type.NUMBER){
+      Long number = bencode.decode(bencodedValue.getBytes(), Type.NUMBER);
+      System.out.println(gson.toJson(number));
+    }
+    if(type == Type.LIST){
+      List<Object> list = bencode.decode(bencodedValue.getBytes(), Type.LIST);
+      System.out.println(gson.toJson(list));
+    }
+    if(type == Type.DICTIONARY){
+      Map<String, Object> dict = bencode.decode(bencodedValue.getBytes(), Type.DICTIONARY);
+      System.out.println(gson.toJson(dict));
+    }
+  }
+
   public static Type getType(String bencodedValue) {
     char []c = bencodedValue.toCharArray();
     if(Character.isDigit(c[0])) {
