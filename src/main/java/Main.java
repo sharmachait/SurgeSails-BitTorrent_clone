@@ -14,7 +14,8 @@ public class Main {
   public static void main(String[] args) throws Exception {
     System.err.println("Logs from your program will appear here!");
     String command = args[0];
-
+    System.out.println("===========================================================================================================");
+    System.out.println(command);
     switch (command) {
       case "decode":
         String bencodedValue = args[1];
@@ -22,6 +23,8 @@ public class Main {
         break;
       case "info":
         String filename = args[1];
+        System.out.println("===========================================================================================================");
+        System.out.println(filename);
         String content = readFile(filename);
         decode(content);
         break;
