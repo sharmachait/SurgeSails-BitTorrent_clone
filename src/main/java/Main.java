@@ -1,10 +1,10 @@
 import com.dampcake.bencode.Type;
 import com.google.gson.Gson;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import com.dampcake.bencode.Bencode;
 
@@ -12,17 +12,32 @@ public class Main {
   private static final Gson gson = new Gson();
   private static final Bencode bencode = new Bencode();
   public static void main(String[] args) throws Exception {
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
     System.err.println("Logs from your program will appear here!");
     String command = args[0];
-    String bencodedValue = args[1];
+
     switch (command) {
       case "decode":
+        String bencodedValue = args[1];
         decode(bencodedValue);
+        break;
+      case "info":
+        String filename = args[1];
+        String content = readFile(filename);
+        decode(content);
         break;
     }
   }
-
+  private static String readFile(String filename) throws Exception {
+    File myObj = new File(filename);
+    Scanner sc = new Scanner(myObj);
+    StringBuilder content = new StringBuilder();
+    while (sc.hasNextLine()) {
+      String data = sc.nextLine();
+      content.append(data);
+    }
+    sc.close();
+    return content.toString();
+  }
   private static void decode(String bencodedValue) {
     Type type = getType(bencodedValue);
     if(type == Type.STRING){
