@@ -16,22 +16,26 @@ public class Main {
     switch (command) {
       case "decode":
         String bencodedValue = args[1];
-        decode(bencodedValue);
+        Type type = getType(bencodedValue);
+        decode(bencodedValue, type);
         break;
       case "info":
         String filename = args[1];
-        String content = readFile(filename);
+        byte[] content = readFile(filename);
         System.out.println("===========================================================================================================");
         System.out.println(content);
-        decode(content);
+        Map<String, Object> torrent = bencode.decode(content, Type.DICTIONARY);
+        System.out.printf("Tracker URL: %s\n", torrent.get("announce"));
+        Map<String,Object> info = (Map<String,Object>)torrent.get("info");
+        System.out.printf("Length: %s\n", info.get("length"));
         break;
     }
   }
-  private static String readFile(String filename) throws Exception {
-    return new String(Files.readAllBytes(Path.of(filename)), StandardCharsets.UTF_8);
+  private static byte[] readFile(String filename) throws Exception {
+    return Files.readAllBytes(Path.of(filename));
   }
-  private static void decode(String bencodedValue) {
-    Type type = getType(bencodedValue);
+  private static void decode(String bencodedValue, Type type) {
+
     if(type == Type.STRING){
       String decoded = bencode.decode(bencodedValue.getBytes(), Type.STRING);
       System.out.println(gson.toJson(decoded));
