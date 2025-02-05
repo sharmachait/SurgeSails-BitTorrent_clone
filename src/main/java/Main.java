@@ -59,6 +59,8 @@ public class Main {
   }
 
   public static Type getType(String bencodedValue) {
+    System.out.println("===========================================================================================================");
+    System.out.println(bencodedValue);
     char []c = bencodedValue.toCharArray();
     if(Character.isDigit(c[0])) {
       return Type.STRING;
