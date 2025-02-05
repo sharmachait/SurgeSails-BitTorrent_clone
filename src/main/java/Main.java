@@ -1,11 +1,10 @@
 import com.dampcake.bencode.Type;
 import com.google.gson.Gson;
-
-import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-
 import com.dampcake.bencode.Bencode;
 
 public class Main {
@@ -14,8 +13,6 @@ public class Main {
   public static void main(String[] args) throws Exception {
     System.err.println("Logs from your program will appear here!");
     String command = args[0];
-    System.out.println("===========================================================================================================");
-    System.out.println(command);
     switch (command) {
       case "decode":
         String bencodedValue = args[1];
@@ -23,25 +20,13 @@ public class Main {
         break;
       case "info":
         String filename = args[1];
-        System.out.println("===========================================================================================================");
-        System.out.println(filename);
         String content = readFile(filename);
         decode(content);
         break;
     }
   }
   private static String readFile(String filename) throws Exception {
-    File myObj = new File(filename);
-    Scanner sc = new Scanner(myObj);
-    StringBuilder content = new StringBuilder();
-    while (sc.hasNextLine()) {
-      String data = sc.nextLine();
-      System.out.println("===========================================================================================================");
-      System.out.println(data);
-      content.append(data);
-    }
-    sc.close();
-    return content.toString();
+    return new String(Files.readAllBytes(Path.of(filename)), StandardCharsets.UTF_8);
   }
   private static void decode(String bencodedValue) {
     Type type = getType(bencodedValue);
