@@ -21,6 +21,8 @@ public class Main {
       case "info":
         String filename = args[1];
         String content = readFile(filename);
+        System.out.println("===========================================================================================================");
+        System.out.println(content);
         decode(content);
         break;
     }
