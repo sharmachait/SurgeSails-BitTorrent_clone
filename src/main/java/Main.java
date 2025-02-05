@@ -33,6 +33,8 @@ public class Main {
     StringBuilder content = new StringBuilder();
     while (sc.hasNextLine()) {
       String data = sc.nextLine();
+      System.out.println("===========================================================================================================");
+      System.out.println(data);
       content.append(data);
     }
     sc.close();
@@ -59,8 +61,6 @@ public class Main {
   }
 
   public static Type getType(String bencodedValue) {
-    System.out.println("===========================================================================================================");
-    System.out.println(bencodedValue);
     char []c = bencodedValue.toCharArray();
     if(Character.isDigit(c[0])) {
       return Type.STRING;
